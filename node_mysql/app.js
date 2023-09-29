@@ -7,6 +7,7 @@ const app = express();
 
 app.use(express.json());
 
+// 1. 
 app.get("/users", async (req, res) => {
     await Usuario.findAll()
     .then( (users) => {
@@ -21,7 +22,7 @@ app.get("/users", async (req, res) => {
         })
     })
 });
-
+// 2. 
 app.get("/users/order", async (req, res) => {
     await Usuario.findAll({order: [['id', 'DESC']]})
     .then( (users) => {
@@ -36,8 +37,28 @@ app.get("/users/order", async (req, res) => {
         })
     })
 });
-
+// 3. 
+app.get("/users/details", async (req, res) => {
+    await Usuario.findAll({
+    attributes: ['id', 'name', 'email'],
+    order: [['name', 'ASC']] })
+    .then( (users) => {
+        return res.json({
+            erro: false,
+            users
+        });
+    }) .catch( () => {
+        return res.status(400).json({
+            erro: true,
+            msn: 'Sem registros :( !'
+        })
+    })
+});
+// 4. 
 app.get("/users/:id", async (req, res) => {
+    const { id } = req.params;
+
+    // await Usuario.findAll( { where: { id: id }})
     await Usuario.findByPk(id)
     .then( (users) => {
         return res.json({
@@ -51,7 +72,7 @@ app.get("/users/:id", async (req, res) => {
         })
     })
 });
-
+// 5. 
 app.post("/user", async (req, res) => {
     const { name, email } = req.body;
     await Usuario.create( req.body )
@@ -70,27 +91,40 @@ app.post("/user", async (req, res) => {
         });
     });
 });
+// 6. 
+app.put("/user", async (req, res) => {
+    const { id } = req.body;
 
-app.put("/usuario", (req, res) => {
-    const { id, nome, email } = req.body;
-
-    return res.json({
-        erro: false,
-        id: id,
-        nome: nome,
-        email: email,
-        message: "atualizado com sucesso"
-    });
+    await Usuario.update( req.body, {where: {id}} )
+    .then(() => {
+        return res.json({
+            erro: true,
+            msn: "Sucesso:: editado"
+        })
+    }).catch(() => {
+        return res.json({
+            erro: true,
+            msn: "Erro: Usuário não editado"
+        })
+    })
 });
-
-app.delete("/usuario/:id", (req, res) => {
+// 7. 
+app.delete("/user/:id", async (req, res) => {
     const { id } = req.params;
+
+    await Usuario.destroy({ where: {id}})
 // const id = req.params.id;
-    return res.json({
-        erro: false,
-        id: id,
-        message: "Excluido sucesso"
-    });
+    .then( () => {
+        return res.json({
+            erro: false,
+            msn: "Excluido sucesso"
+        });
+    }).catch(() => {
+        return res.json({
+            erro: true,
+            msn: "Error não deletado"
+        });
+    })
 });
 
 let port = 8080;

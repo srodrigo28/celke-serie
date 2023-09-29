@@ -1,6 +1,6 @@
 USE celke;
 
-CREATE TABLE `usuarios`(
+CREATE TABLE `users`(
     `id` int NOT NULL AUTO_INCREMENT,
     `name` varchar(220),
     `email` varchar(220),

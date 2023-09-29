@@ -17,3 +17,13 @@ npm init -y
 ```
 npm i express
 ```
+
+* Sequelize
+```
+npm i --save sequelize
+```
+
+* Mysql2
+```
+npm i --save mysql2
+```

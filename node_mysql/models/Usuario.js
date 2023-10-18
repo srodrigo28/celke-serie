@@ -15,9 +15,14 @@ const Usuario = db.define('users', {
     email: {
         type: Sequelize.STRING,
         allowNull: false,
+    },
+    password: {
+        type: Sequelize.STRING,
+        allowNull: false,
     }
 });
 
 Usuario.sync();
+// Usuario.sync( { alter: true } );
 
 module.exports = Usuario;

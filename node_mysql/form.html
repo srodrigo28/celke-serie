@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body class="">
+    <form>
+        <h1>Cadastro</h1>
+        <div class="row mb-3">
+            <div class="col">
+                <label>Prefixo</label>
+                <input type="text" placeholder="Prefixo" class="form-control">
+            </div>
+            <div class="col">
+                <label>Equipamento</label>
+                <input type="text" placeholder="Equipamento" class="form-control">
+            </div>
+            <div class="col">
+                <label>Frente de Serviço</label>
+                <input type="text" placeholder="Frente de Serviço" class="form-control">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <label>Nº de Seria</label>
+                <input type="text" placeholder="Nº de Seria" class="form-control">
+            </div>
+            <div class="col">
+                <label>Marca</label>
+                <select name="marca" class="form-control">
+                    <option value="ford">FORD</option>
+                    <option value="ford">MERCEDES BENZ</option>
+                    <option value="volk">VOLKSVWAGEN</option>
+                </select>
+            </div>
+            <div class="col">
+                <label>Modelo</label>
+                <input type="text" placeholder="Modelo" class="form-control">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-1">
+                <label>Placa</label>
+                <input type="text" placeholder="Placa" class="form-control">
+            </div>
+            <div class="col-1">
+                <label>Ano</label>
+                <select name="ano" class="form-control text-center">
+                    <option value="2023">2022 / 2023</option>
+                    <option value="2022">2021 / 2022</option>
+                    <option value="2021">2021 / 2000</option>
+                    <option value="2020">2020 / 2019</option>
+                    <option value="2019">2019 / 2018</option>
+                </select>
+            </div>
+            <div class="col-2">
+                <label>Situação</label>
+                <select name="ano" class="form-control text-center">
+                    <option value="opera">Operacional</option>
+                    <option value="manu1">Aguardando Manutenção</option>
+                    <option value="manu2">Manutenção</option>
+                </select>
+            </div>
+            <div class="col">
+                <label>Descrição</label>
+                <input type="text" placeholder="Descrição" class="form-control">
+            </div>
+        </div>
+
+        <button class="btn btn-primary">Cadastrar</button>
+    </form>
+
+    <table class="table table-striped table-hover mt-3">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Prefixo</th>
+                <th>Equipamento</th>
+                <th>Frente de Serviço</th>
+                
+                <th>Placa</th>
+                <th>Nº. de Serie</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Ano</th>
+                <th>Situação</th>
+                <th>Descrição</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>01</td>
+                <td>CB-14</td>
+                <td>CAMINHÃO BASCULANTE</td>
+                <td>MASSA ASFÁLTICA</td>
+
+                <td>RRP-9J24</td>
+                <td>953658246PR041026</td>
+                <td>VOLKSWAGEN</td>
+                <td>24260 CRM 6X2</td>
+                <td>2022/2023</td>
+                <td>OPERACIONAL</td>
+                <td>OK</td>
+            </tr>
+            <tr>
+                <td>02</td>
+                <td>CB-14</td>
+                <td>CAMINHÃO BASCULANTE</td>
+                <td>MASSA ASFÁLTICA</td>
+                
+                <td>RRP-9J24</td>
+                <td>953658246PR041026</td>
+                <td>VOLKSWAGEN</td>
+                <td>24260 CRM 6X2</td>
+                <td>2022/2023</td>
+                <td>OPERACIONAL</td>
+                <td>OK</td>
+            </tr>
+            <tr>
+                <td>03</td>
+                <td>CB-14</td>
+                <td>CAMINHÃO BASCULANTE</td>
+                <td>MASSA ASFÁLTICA</td>
+                
+                <td>RRP-9J24</td>
+                <td>953658246PR041026</td>
+                <td>VOLKSWAGEN</td>
+                <td>24260 CRM 6X2</td>
+                <td>2022/2023</td>
+                <td>OPERACIONAL</td>
+                <td>OK</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

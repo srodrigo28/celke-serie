@@ -1,0 +1,6 @@
+{
+    "cadastro" : [
+        {"item": 1, "prefixo": "", "equipamento": "CAMINHÃO"},
+        {"item": 2, "prefixo": "", "equipamento": "CAMINHÃO"}
+    ]
+}

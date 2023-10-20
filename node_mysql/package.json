@@ -4,13 +4,16 @@
   "description": "* Link:\r ```\r https://celke.com.br/clms/aula-curso/view/4138\r ```",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "api": "json-server --watch db.json --port 8081"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "express": "^4.18.2",
+    "json-server": "^0.17.4",
     "mysql2": "^3.6.1",
     "nodemon": "^3.0.1",
     "sequelize": "^6.33.0"

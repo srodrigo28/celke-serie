@@ -1,6 +1,5 @@
 const express = require("express");
 const db = require('./models/db');
-const bcrypt = require('bcrypt');
 
 const Usuario = require('./models/Usuario.js');
 
@@ -73,16 +72,15 @@ app.get("/users/:id", async (req, res) => {
         })
     })
 });
-
-// 5. Cadastro com Criptografia de senha
+// 5. 
 app.post("/user", async (req, res) => {
-    var dados = req.body;
-    dados.password = await bcrypt.hash(dados.password, 8);
-
-    await Usuario.create( dados )
+    const { name, email } = req.body;
+    await Usuario.create( req.body )
         .then(() => {
             return res.status(201).json({
                 erro: false,
+                name: name,
+                email: email,
                 msn: 'Usuário cadastrado com suceso'
             });
         })
@@ -93,28 +91,7 @@ app.post("/user", async (req, res) => {
         });
     });
 });
-
-// 6. Atualizando cadastro com criptografia
-app.put("/user-senha", async (req, res) => {
-    const { id, password } = req.body;
-
-    var senhaCrypt = await bcrypt.hash(password, 8);
-
-    await Usuario.update({password: senhaCrypt}, {where: {id}} )
-    .then(() => {
-        return res.json({
-            erro: true,
-            msn: "Sucesso:: editado 2"
-        })
-    }).catch(() => {
-        return res.json({
-            erro: true,
-            msn: "Erro: Usuário não editado"
-        })
-    })
-});
-
-// 6. Atualizando cadastro
+// 6. 
 app.put("/user", async (req, res) => {
     const { id } = req.body;
 
@@ -131,7 +108,6 @@ app.put("/user", async (req, res) => {
         })
     })
 });
-
 // 7. 
 app.delete("/user/:id", async (req, res) => {
     const { id } = req.params;

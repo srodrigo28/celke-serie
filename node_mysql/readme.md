@@ -20,17 +20,26 @@ npm init -y
 
 ### Dependências
 
-* Express
+* 1. Express
 ```
 npm i express
 ```
 
-* Sequelize
+* 2. Sequelize
 ```
 npm i --save sequelize
 ```
 
-* Mysql2
+* 3. Mysql2
 ```
 npm i --save mysql2
 ```
+
+* 4. Bcrypt
+```
+npm i bcrypt
+```
+
+* 5. JWT
+
+* 6. Multer

@@ -41,5 +41,7 @@ npm i bcrypt
 ```
 
 * 5. JWT
-
+```
+npm i --save jsonwebtoken
+```
 * 6. Multer

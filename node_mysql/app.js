@@ -1,7 +1,11 @@
+const { promiify } = require('util');
+
 const express = require("express");
-const db = require('./models/db');
+
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
+const db = require('./models/db');
 const Usuario = require('./models/Usuario.js');
 
 const app = express();
@@ -55,8 +59,8 @@ app.get("/users/details", async (req, res) => {
         })
     })
 });
-// 4. 
-app.get("/users/:id", async (req, res) => {
+// 4. Agora validar token
+app.get("/users/:id", validarToken, async (req, res) => {
     const { id } = req.params;
 
     // await Usuario.findAll( { where: { id: id }})
@@ -132,7 +136,7 @@ app.put("/user", async (req, res) => {
     })
 });
 
-// 7. 
+// 7. Apagando
 app.delete("/user/:id", async (req, res) => {
     const { id } = req.params;
 
@@ -144,12 +148,76 @@ app.delete("/user/:id", async (req, res) => {
             msn: "Excluido sucesso"
         });
     }).catch(() => {
-        return res.json({
+        return res.status(400).json({
             erro: true,
             msn: "Error não deletado"
         });
     })
 });
+
+// 8. Login
+app.post('/login', async (req, res) => {
+    const user = await Usuario.findOne({
+        attributes: ['id', 'name', 'email', 'password' ],
+        where: {email: req.body.email }})
+
+    if(user === null){
+        return res.status(400).json({
+            erro: true,
+            msn: "Error Usuário não encontrado"
+        });
+    }else if(!(await bcrypt.compare(req.body.password, user.password))){
+        return res.status(400).json({
+            erro: true,
+            msn: "Senha do Usuário divergente!"
+        });
+    }
+
+    /** Criando uma sessão via jwt */
+    const chaveToken = 'yFSJrVue3K4';
+
+    var token = jwt.sign({id: user.id}, chaveToken, {
+        //expiresIn: 600 // 10min
+        expiresIn: '7d' // 7 dias
+    });
+
+    return res.json({
+        erro: true,
+        msn: "Login realizado com sucesso",
+        token: token
+    })
+})
+
+// 9. Validar Token
+async function validarToken(req, res, next){
+    // return res.json({ mensagem: "validar token" })
+    const authHeader = req.headers.authorization;
+    const [bearer, token] = authHeader.split(' ');
+
+    if(!token){
+        return res.status(400).json({
+            erro: true,
+            msn: " Erro: Certificado de segurança não existente contate o suporte! "
+        });
+    }
+    try{
+        const decode = await promiify(jwt.verify(token, 'chaveToken'));
+        req.userId = decode.id;
+        return next();
+
+    }catch(err){
+        return res.status(400).json({
+            erro: true,
+            msn: err + " Erro: Certificado de segurança inválido contate o suporte! "
+        });
+    }
+
+   return res.json( { mensagem: token } )
+   // return res.json( { mensagem: `validar token: ${token}` } )
+   // return res.json( { mensagem: "validar token: " + token} )
+    
+    return next();
+}
 
 let port = 8080;
 

@@ -1,8 +1,9 @@
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize.Sequelize( 'celke', 'root', '', {
-    host: 'localhost',
-    dialect: 'mysql'
+
+const sequelize = new Sequelize.Sequelize( process.env.DB, process.env.USER, process.env.PASS, {
+    host: process.env.HOST,
+    dialect: process.env.DIALECT
 });
 
 sequelize.authenticate()

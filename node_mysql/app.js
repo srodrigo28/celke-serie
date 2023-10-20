@@ -1,19 +1,41 @@
-const { promiify } = require('util');
+require('dotenv').config();
 
 const express = require("express");
-
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const cors = require('cors')
 
 const db = require('./models/db');
 const Usuario = require('./models/Usuario.js');
+const { eAdmin } = require('./middlewares/auth.js')
 
 const app = express();
 
 app.use(express.json());
 
+// app.use(cors())
+
+/*** Config persolinalizada para CORS  */
+app.use((_, res, next) => {
+    try{
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        res.header("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type, Authorization");
+        app.use(cors());
+        next();
+    }catch(erro){
+        return res.status(400).json({
+            erro: true,
+            msn: 'Erro: 00:: Cors !'
+        })
+    }
+})
+
+
+const chave = process.env.SECRET;
+
 // 1. 
-app.get("/users", async (req, res) => {
+app.get("/users", eAdmin, async (req, res) => {
     await Usuario.findAll()
     .then( (users) => {
         return res.json({
@@ -28,7 +50,7 @@ app.get("/users", async (req, res) => {
     })
 });
 // 2. 
-app.get("/users/order", async (req, res) => {
+app.get("/users/order", eAdmin, async (req, res) => {
     await Usuario.findAll({order: [['id', 'DESC']]})
     .then( (users) => {
         return res.json({
@@ -43,7 +65,7 @@ app.get("/users/order", async (req, res) => {
     })
 });
 // 3. 
-app.get("/users/details", async (req, res) => {
+app.get("/users/details", eAdmin, async (req, res) => {
     await Usuario.findAll({
     attributes: ['id', 'name', 'email'],
     order: [['name', 'ASC']] })
@@ -60,7 +82,7 @@ app.get("/users/details", async (req, res) => {
     })
 });
 // 4. Agora validar token
-app.get("/users/:id", validarToken, async (req, res) => {
+app.get("/users/:id", eAdmin, async (req, res) => {
     const { id } = req.params;
 
     // await Usuario.findAll( { where: { id: id }})
@@ -79,7 +101,7 @@ app.get("/users/:id", validarToken, async (req, res) => {
 });
 
 // 5. Cadastro com Criptografia de senha
-app.post("/user", async (req, res) => {
+app.post("/user", eAdmin, async (req, res) => {
     var dados = req.body;
     dados.password = await bcrypt.hash(dados.password, 8);
 
@@ -99,7 +121,7 @@ app.post("/user", async (req, res) => {
 });
 
 // 6. Atualizando cadastro com criptografia
-app.put("/user-senha", async (req, res) => {
+app.put("/user-senha", eAdmin, async (req, res) => {
     const { id, password } = req.body;
 
     var senhaCrypt = await bcrypt.hash(password, 8);
@@ -119,7 +141,7 @@ app.put("/user-senha", async (req, res) => {
 });
 
 // 6. Atualizando cadastro
-app.put("/user", async (req, res) => {
+app.put("/user", eAdmin, async (req, res) => {
     const { id } = req.body;
 
     await Usuario.update( req.body, {where: {id}} )
@@ -137,7 +159,7 @@ app.put("/user", async (req, res) => {
 });
 
 // 7. Apagando
-app.delete("/user/:id", async (req, res) => {
+app.delete("/user/:id", eAdmin, async (req, res) => {
     const { id } = req.params;
 
     await Usuario.destroy({ where: {id}})
@@ -159,14 +181,19 @@ app.delete("/user/:id", async (req, res) => {
 app.post('/login', async (req, res) => {
     const user = await Usuario.findOne({
         attributes: ['id', 'name', 'email', 'password' ],
-        where: {email: req.body.email }})
+        where: {
+            email: req.body.email 
+        }
+    })
 
     if(user === null){
         return res.status(400).json({
             erro: true,
             msn: "Error Usuário não encontrado"
         });
-    }else if(!(await bcrypt.compare(req.body.password, user.password))){
+    }
+
+    if(!(await bcrypt.compare(req.body.password, user.password))){
         return res.status(400).json({
             erro: true,
             msn: "Senha do Usuário divergente!"
@@ -174,9 +201,8 @@ app.post('/login', async (req, res) => {
     }
 
     /** Criando uma sessão via jwt */
-    const chaveToken = 'yFSJrVue3K4';
 
-    var token = jwt.sign({id: user.id}, chaveToken, {
+    var token = jwt.sign({ id: user.id, levelAcess: 1 }, chave, {
         //expiresIn: 600 // 10min
         expiresIn: '7d' // 7 dias
     });
@@ -188,36 +214,28 @@ app.post('/login', async (req, res) => {
     })
 })
 
-// 9. Validar Token
-async function validarToken(req, res, next){
-    // return res.json({ mensagem: "validar token" })
-    const authHeader = req.headers.authorization;
-    const [bearer, token] = authHeader.split(' ');
-
-    if(!token){
-        return res.status(400).json({
+// 9. Validar
+app.get("/val-token", eAdmin, async (req, res) => {
+    await User.findByPk(req.userId)
+    .then((user) => {
+        if(user === ''){
+            return res.json({
+                erro: false,
+                msg: "Erro: Usuário indefinido" 
+            })
+        }
+        return res.json({
+            erro: false,
+            user
+        })
+    })
+    .catch((error) => {
+        return res.json({
             erro: true,
-            msn: " Erro: Certificado de segurança não existente contate o suporte! "
-        });
-    }
-    try{
-        const decode = await promiify(jwt.verify(token, 'chaveToken'));
-        req.userId = decode.id;
-        return next();
-
-    }catch(err){
-        return res.status(400).json({
-            erro: true,
-            msn: err + " Erro: Certificado de segurança inválido contate o suporte! "
-        });
-    }
-
-   return res.json( { mensagem: token } )
-   // return res.json( { mensagem: `validar token: ${token}` } )
-   // return res.json( { mensagem: "validar token: " + token} )
-    
-    return next();
-}
+            msg: "Erro: " + error
+        })
+    })
+})
 
 let port = 8080;
 

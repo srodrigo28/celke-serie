@@ -3,7 +3,7 @@
 ### último
 * Link APi
 ```
-https://celke.com.br/clms/aula-curso/view/4169
+https://celke.com.br/clms/aula-curso/view/4174
 ```
 
 * Link Login React:
@@ -44,4 +44,13 @@ npm i bcrypt
 ```
 npm i --save jsonwebtoken
 ```
-* 6. Multer
+
+* 6. DotEnv gerenciar variaveis de ambiente
+```
+npm i dotenv
+```
+
+* 7. CORS Liberar acesso externo
+```
+npm i cors
+```

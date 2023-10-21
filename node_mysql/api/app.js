@@ -177,7 +177,7 @@ app.delete("/user/:id", eAdmin, async (req, res) => {
     })
 });
 
-// 8. Login
+// 8. Login e Nivel de acesso
 app.post('/login', async (req, res) => {
     const user = await Usuario.findOne({
         attributes: ['id', 'name', 'email', 'password' ],
@@ -216,26 +216,22 @@ app.post('/login', async (req, res) => {
 
 // 9. Validar
 app.get("/val-token", eAdmin, async (req, res) => {
-    await User.findByPk(req.userId)
-    .then((user) => {
-        if(user === ''){
-            return res.json({
-                erro: false,
-                msg: "Erro: Usuário indefinido" 
-            })
-        }
+    await Usuario.findByPk(req.userId, { attributes: ['id', 'name', 'email'] })
+    .then( (Usuario) => {
         return res.json({
-            erro: false,
-            user
-        })
-    })
-    .catch((error) => {
-        return res.json({
+            // erro: false,
+            Usuario,
+            nivel: req.levelAcess
+            //nivelAcesso: req.levelAcess
+            // msn: "Token válido! Usuario: " + req.userId + " Nivel de acesso: " +  req.levelAcess
+        });
+    }).catch(() => {
+        return res.status(400).json({
             erro: true,
-            msg: "Erro: " + error
-        })
+            msn: "Error val-token: token inválido!"
+        });
     })
-})
+});
 
 let port = 8080;
 

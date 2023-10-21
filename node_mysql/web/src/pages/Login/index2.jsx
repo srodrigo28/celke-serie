@@ -1,17 +1,10 @@
-import { useState, useContext } from "react"
-import { Context } from "../../Context/AuthContext"
-
+import { useState } from "react"
 import { useHistory } from "react-router-dom"
 
 import api from '../../config/configApi'
 
 export const Login = () => {
-
     const history = useHistory();
-    
-    const { authenticated } = useContext(Context);
-    console.log( 'Situação Login: ' + authenticated );
-
 
     const [user, setUser] = useState({
         email: '',
@@ -32,8 +25,15 @@ export const Login = () => {
     const loginSubmit = async e => {
         e.preventDefault()
         setStatus( { loading: true } )
+        /** Headers
+        const headers = {
+            'Content-type': 'application/json'
+        }
+        await api.post('login', user, {headers})
+        */
         await api.post('/login', user)
         .then( (res) => {
+            // console.log(res, user.email, user.password);
             setStatus({
                 /***type: 'success',
                 msn: res.data.msn, */
@@ -46,26 +46,25 @@ export const Login = () => {
                 console.log(error, '1. Api não responde Ocorreu error')
                 setStatus({
                     type: 'error',
-                    msn: '1. Api não responde Ocorreu error',
+                    msn: error.res,
                     loading: false
                 });
             }else{
                 console.log(error, '2. Api não responde Ocorreu error')
                 setStatus({
                     type: 'error',
-                    msn: '2. Api não responde Ocorreu error',
+                    msn: error.res,
                     loading: false
                 })
             }
         })
         
     }
-    
+
     return(
         <div>
             <h1>Login</h1>
-
-            { status.type == 'error' ? <p> {status.msn} </p> : "" } 
+            { status.type == 'error' ? <p> {status.msn} </p> : "1" } 
 
             { status.type === 'success' ? <p> {status.msn} </p> : "" } 
 
@@ -76,7 +75,7 @@ export const Login = () => {
                 <input type="text" name="email" onChange={valorInput} />
 
                 <label>Senha: </label>
-                <input type="password" name="password" autoComplete="on" onChange={valorInput} />
+                <input type="password" name="password" onChange={valorInput} />
 
                 { status.loading ? <button type="submit" disabled>Aguarde ...</button> : <button type="submit">Acessar</button>}
             </form>

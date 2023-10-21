@@ -1,7 +1,11 @@
 ## Modulo Web Celke Treinamentos
 * link ultimo visto
 ```
-https://celke.com.br/clms/aula-curso/view/4184
+https://celke.com.br/clms/aula-curso/view/4187
+```
+* Como salvar informações no localStorage
+```
+https://celke.com.br/clms/aula-curso/view/4185
 ```
 
 ### Baixar o projeto e Rodar

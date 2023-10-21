@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require("express");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const cors = require('cors')
+const cors = require('cors');
 
 const db = require('./models/db');
 const Usuario = require('./models/Usuario.js');
@@ -13,9 +13,26 @@ const app = express();
 
 app.use(express.json());
 
-// app.use(cors())
+app.use(cors())
 
-/*** Config persolinalizada para CORS  */
+/*** 2
+app.use(cors({
+    origin: '*'
+}));
+ */
+
+/*** 3
+app.use((req, res, next) => {
+	//Qual site tem permissão de realizar a conexão, no exemplo abaixo está o "*" indicando que qualquer site pode fazer a conexão
+    res.header("Access-Control-Allow-Origin", "*");
+	//Quais são os métodos que a conexão pode realizar na API
+    res.header("Access-Control-Allow-Methods", 'GET,PUT,POST,DELETE');
+    app.use(cors());
+    next();
+});
+*/
+
+/*** 4 Config persolinalizada para CORS
 app.use((_, res, next) => {
     try{
         res.header("Access-Control-Allow-Origin", "*");
@@ -30,7 +47,7 @@ app.use((_, res, next) => {
         })
     }
 })
-
+*/
 
 const chave = process.env.SECRET;
 
@@ -99,7 +116,6 @@ app.get("/users/:id", eAdmin, async (req, res) => {
         })
     })
 });
-
 // 5. Cadastro com Criptografia de senha
 app.post("/user", eAdmin, async (req, res) => {
     var dados = req.body;
@@ -119,7 +135,6 @@ app.post("/user", eAdmin, async (req, res) => {
         });
     });
 });
-
 // 6. Atualizando cadastro com criptografia
 app.put("/user-senha", eAdmin, async (req, res) => {
     const { id, password } = req.body;
@@ -139,8 +154,7 @@ app.put("/user-senha", eAdmin, async (req, res) => {
         })
     })
 });
-
-// 6. Atualizando cadastro
+// 7. Atualizando cadastro
 app.put("/user", eAdmin, async (req, res) => {
     const { id } = req.body;
 
@@ -157,8 +171,7 @@ app.put("/user", eAdmin, async (req, res) => {
         })
     })
 });
-
-// 7. Apagando
+// 8. Apagando
 app.delete("/user/:id", eAdmin, async (req, res) => {
     const { id } = req.params;
 
@@ -176,9 +189,17 @@ app.delete("/user/:id", eAdmin, async (req, res) => {
         });
     })
 });
-
-// 8. Login e Nivel de acesso
+// 9. Login e Nivel de acesso
 app.post('/login', async (req, res) => {
+
+    await sleep(2000);
+
+    function sleep(ms){
+        return new Promise((resolve) => {
+            setTimeout(resolve, ms);
+        })
+    }
+
     const user = await Usuario.findOne({
         attributes: ['id', 'name', 'email', 'password' ],
         where: {
@@ -213,8 +234,7 @@ app.post('/login', async (req, res) => {
         token: token
     })
 })
-
-// 9. Validar
+// 10. Validar
 app.get("/val-token", eAdmin, async (req, res) => {
     await Usuario.findByPk(req.userId, { attributes: ['id', 'name', 'email'] })
     .then( (Usuario) => {
